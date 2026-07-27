@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}My Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h2 style="font-family:'Playfair Display',serif;"><i class="bi bi-person-circle me-2"></i>My Dashboard</h2>
+    <p class="opacity-75 mb-0">Welcome, {{ user.get_full_name|default:user.username }}!</p>
+  </div>
+</div>
+<div class="container py-5">
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card stat-card text-center p-3">
+        <i class="bi bi-cash-stack fs-2 mb-2 text-success"></i>
+        <h3 class="fw-bold text-success">UGX {{ total_donated|floatformat:0 }}</h3>
+        <p class="text-muted mb-0">Total Donated</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card stat-card text-center p-3">
+        <i class="bi bi-receipt fs-2 mb-2" style="color:var(--mw-primary);"></i>
+        <h3 class="fw-bold">{{ my_donations.count }}</h3>
+        <p class="text-muted mb-0">Donations Made</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card stat-card text-center p-3">
+        <i class="bi bi-people fs-2 mb-2" style="color:var(--mw-secondary);"></i>
+        <h3 class="fw-bold">{{ my_applications.count }}</h3>
+        <p class="text-muted mb-0">Volunteer Applications</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-clock-history me-2"></i>My Donations</span>
+          <a href="{% url 'donate' %}" class="btn btn-sm btn-secondary">Donate Again</a>
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-hover mb-0">
+            <thead class="table-light"><tr><th>Cause</th><th>Amount</th><th>Date</th></tr></thead>
+            <tbody>
+              {% for d in my_donations %}
+              <tr>
+                <td>{{ d.cause.title|default:"General" }}</td>
+                <td>UGX {{ d.amount|floatformat:0 }}</td>
+                <td>{{ d.created_at|date:"M d, Y" }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="3" class="text-center text-muted py-3">No donations yet. <a href="{% url 'donate' %}">Make your first!</a></td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-person-check me-2"></i>My Applications</span>
+          <a href="{% url 'opportunity_list' %}" class="btn btn-sm btn-outline-primary">Browse</a>
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-hover mb-0">
+            <thead class="table-light"><tr><th>Opportunity</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody>
+              {% for a in my_applications %}
+              <tr>
+                <td>{{ a.opportunity.title|truncatewords:4 }}</td>
+                <td><span class="badge bg-{% if a.status == 'approved' %}success{% elif a.status == 'rejected' %}danger{% else %}warning text-dark{% endif %}">{{ a.get_status_display }}</span></td>
+                <td>{{ a.created_at|date:"M d, Y" }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="3" class="text-center text-muted py-3">No applications. <a href="{% url 'opportunity_list' %}">Volunteer now!</a></td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

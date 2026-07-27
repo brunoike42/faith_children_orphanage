@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}What We Do{% endblock %}
+{% block content %}
+<div class="page-header text-center">
+    <h1 class="fw-bold" style="font-family:'Playfair Display',serif;">What We Do</h1>
+    <p class="opacity-75">Home &rsaquo; Services</p>
+</div>
+<div class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            {% for service in services_list %}
+            <div class="col-md-4">
+                <div class="card p-4 text-center h-100">
+                    <i class="bi bi-{{ service.icon }} fs-1 mb-3" style="color:var(--mw-primary);"></i>
+                    <h5 class="fw-bold">{{ service.title }}</h5>
+                    <p class="text-muted">{{ service.description }}</p>
+                </div>
+            </div>
+            {% empty %}
+            {% for icon, title, desc in services_default %}
+            <div class="col-md-4">
+                <div class="card p-4 text-center h-100">
+                    <i class="bi bi-{{ icon }} fs-1 mb-3" style="color:var(--mw-primary);"></i>
+                    <h5 class="fw-bold">{{ title }}</h5>
+                    <p class="text-muted">{{ desc }}</p>
+                </div>
+            </div>
+            {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

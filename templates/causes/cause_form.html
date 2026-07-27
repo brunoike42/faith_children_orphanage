@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container"><h2 style="font-family:'Playfair Display',serif;">{{ title }}</h2></div>
+</div>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7">
+      <div class="card shadow">
+        <div class="card-header">{{ title }}</div>
+        <div class="card-body p-4">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form|crispy }}
+            {% if cause and cause.image %}
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Current Image</label><br>
+              <img src="{{ cause.image.url }}" width="120" class="rounded border">
+            </div>
+            {% endif %}
+            <button type="submit" class="btn btn-primary me-2">Save</button>
+            <a href="{% url 'manage_causes' %}" class="btn btn-outline-secondary">Cancel</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<style>
+    .counter {
+    font-size: 2.2rem;
+    letter-spacing: 1px;
+}
+
+.hero-section {
+    height: 90vh;
+    position: relative;
+}
+
+.hero-slideshow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.hero-slideshow .slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    animation: slideShow 20s infinite;
+}
+
+/* Each slide delay */
+.hero-slideshow .slide:nth-child(1) { animation-delay: 0s; }
+.hero-slideshow .slide:nth-child(2) { animation-delay: 5s; }
+.hero-slideshow .slide:nth-child(3) { animation-delay: 10s; }
+.hero-slideshow .slide:nth-child(4) { animation-delay: 15s; }
+
+/* Fade + zoom effect */
+@keyframes slideShow {
+    0%   { opacity: 0; transform: scale(1); }
+    10%  { opacity: 1; }
+    25%  { opacity: 1; transform: scale(1.1); }
+    35%  { opacity: 0; }
+    100% { opacity: 0; transform: scale(1); }
+}
+
+/* Overlay (transparent dark layer for readability) */
+.hero-overlay {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* transparency */
+}
+/* SCROLL ANIMATIONS */
+.reveal {
+    opacity: 0;
+    transform: translateY(60px);
+    transition: all 0.8s ease;
+}
+
+.reveal-left {
+    transform: translateX(-60px);
+}
+
+.reveal-right {
+    transform: translateX(60px);
+}
+
+.reveal-zoom {
+    transform: scale(0.85);
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+}
+.text-reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+.text-reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+</style>
+<!-- Hero -->
+<!-- Hero -->
+<div class="hero-section position-relative overflow-hidden">
+
+    <!-- Background Slideshow -->
+    <div class="hero-slideshow">
+        {% for slide in hero_images %}
+            <div class="slide" style="background-image: url('{{ slide.image.url }}');"></div>
+        {% endfor %}
+    </div>
+
+    <!-- Overlay Content -->
+    <div class="hero-overlay d-flex align-items-center">
+        <div class="container text-center text-white">
+
+            <!-- DYNAMIC TEXT (ONLY CHANGE HERE) -->
+            <h1 id="hero-title" class="display-4 fw-bold mb-3" style="font-family:'Playfair Display',serif;"></h1>
+
+            <p id="hero-subtitle" class="lead mb-4 opacity-75"></p>
+
+            <!-- CTA BUTTONS (UNCHANGED) -->
+            <a href="{% url 'donate' %}" class="btn btn-secondary btn-lg me-3 px-4">
+                <i class="bi bi-heart me-2"></i>Donate Now
+            </a>
+
+            <a href="{% url 'opportunity_list' %}" class="btn btn-outline-light btn-lg px-4">
+                <i class="bi bi-people me-2"></i>Volunteer
+            </a>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- Stats -->
+<div class="py-4 reveal" style="background: var(--mw-primary);">
+    <div class="container">
+        <div class="row text-white text-center g-3">
+            <div class="col-6 col-md-3">
+                <h2 class="fw-bold counter" data-target="5000">0</h2>
+                <p class="mb-0">Lives Impacted</p>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2 class="fw-bold counter" data-target="120">0</h2>
+                <p class="mb-0">Volunteers</p>
+            </div>
+            <div class="col-6 col-md-3">
+               <h2 class="fw-bold counter" data-target="50">0</h2>
+                <p class="mb-0">Causes Supported</p>
+            </div>
+            <div class="col-6 col-md-3">
+               <h2 class="fw-bold counter" data-target="5">0</h2>
+                <p class="mb-0">Years of Service</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- About Section -->
+<div class="py-5" style="background: var(--mw-light);">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-md-6    reveal">
+                <p class="text-uppercase fw-bold " style="color: var(--mw-secondary); letter-spacing:2px;" >About Us</p>
+                <h2 class="section-title mb-3 ">Faith Children's Orphanage</h2>
+                <p class="text-muted" text-reveal>Faith Children’s Orphanage Uganda was founded with a simple but heartfelt purpose: to respond to the growing need for care and protection of vulnerable children in our community.
+
+What started as a small effort to help a few children has grown into a mission that continues to touch many lives.
+
+Every child who walks through our doors brings a unique story—but they all share one thing in common: the need for love, care, and a chance to begin again.
+
+And that is exactly what we strive to give.</p>
+                <p class="text-muted">Our Mission is to provide a safe, nurturing, and loving home for orphaned and vulnerable children by meeting their physical, emotional, and educational needs, while empowering them to grow into confident, independent, and hopeful individuals.</p>
+                <a href="{% url 'about' %}" class="btn btn-primary mt-2">Learn More</a>
+            </div>
+            <div class="col-md-6 reveal ">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="card p-3 text-center h-100 reveal reveal-left">
+                            <i class="bi bi-heart-pulse fs-1 mb-2" style="color: var(--mw-primary);"></i>
+                            <h6 class="fw-bold">Healthcare</h6>
+                            <small class="text-muted">Medical outreach to Orphans in Community</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card p-3 text-center h-100 reveal reveal-right">
+                            <i class="bi bi-book fs-1 mb-2" style="color: var(--mw-primary);"></i>
+                            <h6 class="fw-bold">Education</h6>
+                            <small class="text-muted">Scholarships and learning support for the Children</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card p-3 text-center h-100 reveal reveal-left">
+                            <i class="bi bi-house-heart fs-1 mb-2" style="color: var(--mw-primary);"></i>
+                            <h6 class="fw-bold">Shelter</h6>
+                            <small class="text-muted">Safe homes for the vulnerable</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card p-3 text-center h-100 reveal reveal-right">
+                            <i class="bi bi-basket fs-1 mb-2" style="color: var(--mw-primary);"></i>
+                            <h6 class="fw-bold">Food Relief</h6>
+                            <small class="text-muted">Feeding programs and nutrition</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Causes -->
+<div class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <p class="text-uppercase fw-bold" style="color: var(--mw-secondary); letter-spacing:2px;">Our Causes</p>
+            <h2 class="section-title">Let's Know About Charity Causes</h2>
+        </div>
+        <div class="row g-4">
+            {% for cause in causes %}
+           <div class="col-md-4 reveal">
+                <div class="card cause-card h-100">
+                    {% if cause.image %}
+                    <img src="{{ cause.image.url }}" class="card-img-top" style="height:220px; object-fit:cover;" alt="{{ cause.title }}">
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center bg-light" style="height:220px;">
+                        <i class="bi bi-heart text-muted" style="font-size:3rem;"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="fw-bold">{{ cause.title }}</h5>
+                        <p class="text-muted small">{{ cause.description|truncatewords:20 }}</p>
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between small mb-1">
+                                <span>Raised: UGX {{ cause.raised_amount|floatformat:0 }}</span>
+                                <span>{{ cause.progress_percent }}%</span>
+                            </div>
+                            <div class="progress" style="height:8px;">
+                                <div class="progress-bar" style="width:{{ cause.progress_percent }}%;"></div>
+                            </div>
+                            <small class="text-muted">Goal: UGX {{ cause.goal_amount|floatformat:0 }}</small>
+                        </div>
+                        <div class="d-flex gap-2 mt-3">
+                            <a href="{% url 'cause_detail' cause.pk %}" class="btn btn-outline-primary btn-sm flex-fill">Learn More</a>
+                            <a href="{% url 'donate_cause' cause.pk %}" class="btn btn-secondary btn-sm flex-fill">Donate</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center text-muted py-4">
+                <p>No causes yet. <a href="{% url 'donate' %}">Make a general donation</a>.</p>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'cause_list' %}" class="btn btn-primary px-5">View All Causes</a>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Donate -->
+<div class="py-5" style="background: var(--mw-secondary);">
+    <div class="container text-center text-white">
+        <h2 class="fw-bold mb-2" style="font-family:'Playfair Display',serif;">We Believe We Can Save More Children Lives With You</h2>
+        <p class="mb-4 opacity-75">Every contribution, no matter how small, makes a difference. Join us in making a difference. By volunteering at Faith Children’s Orphanage Uganda, you become part of a mission that transforms lives. Whether you can teach, mentor, or simply spend time with the children, your presence brings hope and joy.</p>
+        <a href="{% url 'donate' %}" class="btn btn-dark btn-lg px-5">
+            <i class="bi bi-heart me-2"></i>Donate Now
+        </a>
+    </div>
+</div>
+
+<!-- Upcoming Events -->
+<div class="py-5" style="background: var(--mw-light);">
+    <div class="container">
+        <div class="text-center mb-5">
+            <p class="text-uppercase fw-bold" style="color: var(--mw-secondary); letter-spacing:2px;">Upcoming</p>
+            <h2 class="section-title">Latest Events</h2>
+            <h4 class="section-title mb-3">Stay updated with our latest stories, events, and impact. See how your support is transforming lives every day.</h4>
+        </div>
+        <div class="row g-4">
+            {% for event in events %}
+           <div class="col-md-4 reveal reveal-zoom">
+                <div class="card h-100">
+                    {% if event.image %}
+                    <img src="{{ event.image.url }}" class="card-img-top" style="height:200px; object-fit:cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="text-center p-2 me-3 rounded" style="background: var(--mw-primary); color:#fff; min-width:50px;">
+                                <div class="fw-bold fs-5">{{ event.start_date|date:"d" }}</div>
+                                <small>{{ event.start_date|date:"M" }}</small>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0">{{ event.title }}</h6>
+                                <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{ event.location }}</small>
+                            </div>
+                        </div>
+                        <p class="text-muted small">{{ event.description|truncatewords:15 }}</p>
+                        <a href="{% url 'event_detail' event.pk %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center text-muted">No upcoming events.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Latest Blog -->
+{% if posts %}
+<div class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <p class="text-uppercase fw-bold" style="color: var(--mw-secondary); letter-spacing:2px;">Latest News</p>
+            <h2 class="section-title">From Our Blog</h2>
+        </div>
+        <div class="row g-4">
+            {% for post in posts %}
+            <div class="col-md-4 reveal">
+                <div class="card h-100">
+                    {% if post.image %}
+                    <img src="{{ post.image.url }}" class="card-img-top" style="height:200px; object-fit:cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <small class="text-muted">{{ post.created_at|date:"M d, Y" }}</small>
+                        <h6 class="fw-bold mt-1">{{ post.title }}</h6>
+                        <p class="text-muted small">{{ post.excerpt|default:post.content|truncatewords:15 }}</p>
+                        <a href="{% url 'post_detail' post.slug %}" class="btn btn-outline-primary btn-sm">Read More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Volunteer CTA -->
+<div class="py-5 reveal" style="background: var(--mw-dark); color:#fff;">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-2" style="font-family:'Playfair Display',serif;">Become a Volunteer</h2>
+        <p class="mb-4 opacity-75">Join our community of changemakers and make a real difference.</p>
+        <a href="{% url 'opportunity_list' %}" class="btn btn-secondary btn-lg px-5">
+            <i class="bi bi-people me-2"></i>Get Involved
+        </a>
+    </div>
+</div>
+
+{% endblock %}
+

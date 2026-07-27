@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Events{% endblock %}
+{% block content %}
+<div class="page-header text-center">
+  <h2 style="font-family:'Playfair Display',serif;">Upcoming Events</h2>
+  <p class="opacity-75">Every event at Faith Children’s Orphanage Uganda is more than just a gathering—it’s a moment of hope, connection, and transformation.
+
+Through our events, we bring together supporters, volunteers, and the community to create meaningful experiences that directly impact the lives of the children we care for.
+
+Join us and be part of something truly life-changing.</p>
+</div>
+<div class="container py-5">
+  <div class="row g-4">
+    {% for event in events %}
+    <div class="col-md-4">
+      <div class="card h-100">
+        {% if event.image %}
+        <img src="{{ event.image.url }}" class="card-img-top" style="height:220px;object-fit:cover;">
+        {% endif %}
+        <div class="card-body">
+          <div class="d-flex align-items-start mb-3">
+            <div class="text-center p-2 me-3 rounded" style="background:var(--mw-primary);color:#fff;min-width:55px;">
+              <div class="fw-bold fs-4">{{ event.start_date|date:"d" }}</div>
+              <small>{{ event.start_date|date:"M Y" }}</small>
+            </div>
+            <div>
+              <h5 class="fw-bold mb-1">{{ event.title }}</h5>
+              <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{ event.location }}</small>
+              {% if event.start_time %}<br><small class="text-muted"><i class="bi bi-clock me-1"></i>{{ event.start_time }}</small>{% endif %}
+            </div>
+          </div>
+          <p class="text-muted small">{{ event.description|truncatewords:20 }}</p>
+          <a href="{% url 'event_detail' event.pk %}" class="btn btn-outline-primary btn-sm">View Details</a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+      <i class="bi bi-calendar-x text-muted" style="font-size:4rem;"></i>
+      <p class="mt-3 text-muted">No upcoming events at the moment. Check back soon!</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

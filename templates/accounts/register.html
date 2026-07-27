@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="page-header text-center">
+    <h2 style="font-family:'Playfair Display',serif;">Join Mercy Works</h2>
+    <p class="opacity-75">Create your account and be part of the change</p>
+</div>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow">
+        <div class="card-header text-center py-3">
+          <h5 class="mb-0"><i class="bi bi-person-plus me-2"></i>Create Account</h5>
+        </div>
+        <div class="card-body p-4">
+          <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-primary w-100 py-2 mt-2">
+              <i class="bi bi-check-circle me-2"></i>Register
+            </button>
+          </form>
+          <hr>
+          <p class="text-center mb-0">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

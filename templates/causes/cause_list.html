@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Our Causes{% endblock %}
+{% block content %}
+<div class="page-header text-center">
+  <h2 style="font-family:'Playfair Display',serif;">Our Causes</h2>
+  <p class="opacity-75">Every cause matters — find one that speaks to your heart</p>
+</div>
+<div class="container py-5">
+  <div class="row g-4">
+    {% for cause in causes %}
+    <div class="col-md-4">
+      <div class="card cause-card h-100">
+        {% if cause.image %}
+        <img src="{{ cause.image.url }}" class="card-img-top" style="height:230px;object-fit:cover;" alt="{{ cause.title }}">
+        {% else %}
+        <div class="d-flex align-items-center justify-content-center bg-light" style="height:230px;">
+          <i class="bi bi-heart text-muted" style="font-size:4rem;"></i>
+        </div>
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+          <h5 class="fw-bold">{{ cause.title }}</h5>
+          <p class="text-muted small flex-grow-1">{{ cause.description|truncatewords:25 }}</p>
+          <div class="mb-3">
+            <div class="d-flex justify-content-between small mb-1">
+              <span>Raised: <strong>UGX {{ cause.raised_amount|floatformat:0 }}</strong></span>
+              <span><strong>{{ cause.progress_percent }}%</strong></span>
+            </div>
+            <div class="progress" style="height:8px;">
+              <div class="progress-bar" style="width:{{ cause.progress_percent }}%;"></div>
+            </div>
+            <small class="text-muted">Goal: UGX {{ cause.goal_amount|floatformat:0 }}</small>
+          </div>
+          <div class="d-flex gap-2">
+            <a href="{% url 'cause_detail' cause.pk %}" class="btn btn-outline-primary btn-sm flex-fill">Details</a>
+            <a href="{% url 'donate_cause' cause.pk %}" class="btn btn-secondary btn-sm flex-fill">
+              <i class="bi bi-heart me-1"></i>Donate
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+      <i class="bi bi-heart text-muted" style="font-size:4rem;"></i>
+      <p class="mt-3 text-muted">No active causes at the moment.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

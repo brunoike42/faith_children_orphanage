@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}{{ cause.title }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h2 style="font-family:'Playfair Display',serif;">{{ cause.title }}</h2>
+    <p class="opacity-75 mb-0">Home › Causes › {{ cause.title }}</p>
+  </div>
+</div>
+<div class="container py-5">
+  <div class="row g-5">
+    <div class="col-md-8">
+      {% if cause.image %}
+      <img src="{{ cause.image.url }}" class="img-fluid rounded mb-4 w-100" style="max-height:400px;object-fit:cover;">
+      {% endif %}
+      <h3 class="fw-bold mb-3">{{ cause.title }}</h3>
+      <p class="text-muted" style="line-height:1.8;">{{ cause.description }}</p>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm sticky-top" style="top:80px;">
+        <div class="card-header"><i class="bi bi-bar-chart me-2"></i>Fundraising Progress</div>
+        <div class="card-body">
+          <div class="text-center mb-3">
+            <h2 class="fw-bold" style="color:var(--mw-primary);">{{ cause.progress_percent }}%</h2>
+            <p class="text-muted mb-0">of goal reached</p>
+          </div>
+          <div class="progress mb-3" style="height:12px;">
+            <div class="progress-bar" style="width:{{ cause.progress_percent }}%;"></div>
+          </div>
+          <div class="row text-center mb-3">
+            <div class="col-6">
+              <strong>UGX {{ cause.raised_amount|floatformat:0 }}</strong>
+              <div class="text-muted small">Raised</div>
+            </div>
+            <div class="col-6">
+              <strong>UGX {{ cause.goal_amount|floatformat:0 }}</strong>
+              <div class="text-muted small">Goal</div>
+            </div>
+          </div>
+          <a href="{% url 'donate_cause' cause.pk %}" class="btn btn-secondary w-100 py-2">
+            <i class="bi bi-heart me-2"></i>Donate to This Cause
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% block title %}Our Children{% endblock %}
+{% block extra_css %}
+<style>
+.child-filter-bar {
+  background: #f4f8fb;
+  border-radius: 24px;
+  padding: 18px 20px;
+}
+.child-card {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 24px;
+  overflow: hidden;
+}
+.child-card .card-body {
+  padding: 1.75rem;
+}
+.child-card img {
+  height: 320px;
+  object-fit: cover;
+}
+.child-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(10, 99, 217, 0.95);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+.card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  color: #0f5cd9;
+  padding: 0.85rem 1.25rem;
+  border-radius: 999px;
+  transition: background 0.2s ease;
+}
+.card-cta:hover {
+  background: #eff4ff;
+  text-decoration: none;
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="page-header text-center">
+  <h2 style="font-family:'Playfair Display',serif;">Our Children</h2>
+  <p class="opacity-75">Every child at Faith Children’s Orphanage has a unique story and a bright dream. Sponsor a child and give them the support they need to thrive.</p>
+</div>
+<div class="container py-5">
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="child-filter-bar d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+          <span class="text-muted">Age Group:</span>
+          <form id="child-filters" method="get" class="d-flex flex-wrap gap-2">
+            <select name="age_group" class="form-select form-select-sm" onchange="this.form.submit()">
+              <option value="all" {% if selected_age == 'all' %}selected{% endif %}>All Ages</option>
+              <option value="0-5" {% if selected_age == '0-5' %}selected{% endif %}>0-5 Years</option>
+              <option value="6-8" {% if selected_age == '6-8' %}selected{% endif %}>6-8 Years</option>
+              <option value="9-12" {% if selected_age == '9-12' %}selected{% endif %}>9-12 Years</option>
+              <option value="13+" {% if selected_age == '13+' %}selected{% endif %}>13+ Years</option>
+            </select>
+            <select name="gender" class="form-select form-select-sm" onchange="this.form.submit()">
+              <option value="all" {% if selected_gender == 'all' %}selected{% endif %}>All Genders</option>
+              <option value="female" {% if selected_gender == 'female' %}selected{% endif %}>Female</option>
+              <option value="male" {% if selected_gender == 'male' %}selected{% endif %}>Male</option>
+              <option value="other" {% if selected_gender == 'other' %}selected{% endif %}>Other</option>
+            </select>
+          </form>
+        </div>
+        <form class="w-100 w-md-35" method="get">
+          <div class="input-group">
+            <input type="hidden" name="age_group" value="{{ selected_age }}">
+            <input type="hidden" name="gender" value="{{ selected_gender }}">
+            <input type="text" name="search" class="form-control form-control-sm" placeholder="Search by name..." value="{{ search_query }}">
+            <button class="btn btn-secondary btn-sm" type="submit">Search</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    {% if database_ready %}
+      {% for child in children %}
+      <div class="col-lg-3 col-md-6">
+        <div class="child-card shadow-sm position-relative">
+          {% if child.image %}
+          <div class="position-relative">
+            <img src="{{ child.image.url }}" class="w-100" alt="{{ child.name }}">
+            <div class="child-badge">{{ child.age }} Years</div>
+          </div>
+          {% endif %}
+          <div class="card-body">
+            <h5 class="fw-bold mb-2">{{ child.name }}</h5>
+            <p class="text-muted small mb-2">“{{ child.quote|default:'A hopeful child ready to build a better future.' }}”</p>
+            <p class="text-secondary small mb-3">{{ child.description|truncatewords:20 }}</p>
+            <a href="{% url 'donate' %}" class="card-cta">Sponsor {{ child.name }} <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12 text-center py-5">
+        <i class="bi bi-people-fill text-muted" style="font-size:4rem;"></i>
+        <p class="mt-3 text-muted">We are preparing stories for our children. Please check back soon.</p>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="col-12 text-center py-5">
+        <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size:4rem;"></i>
+        <p class="mt-3 text-muted">The children section is currently unavailable because the site database is not yet fully set up. Please contact the site administrator or run the required database migrations.</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

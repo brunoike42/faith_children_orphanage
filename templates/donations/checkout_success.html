@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Payment Successful{% endblock %}
+{% block content %}
+<div class="page-header text-center py-5" style="background: linear-gradient(180deg, rgba(11, 122, 69, 0.9), rgba(23, 193, 97, 0.2));">
+  <div class="container">
+    <h2 style="font-family:'Playfair Display',serif;">Thank You!</h2>
+    <p class="opacity-75">Your donation has been recorded. We appreciate your support and will send a confirmation email soon.</p>
+  </div>
+</div>
+<div class="container py-5">
+  <div class="card shadow-sm rounded-4 p-5 text-center">
+    <h3 class="mb-3">Donation Completed</h3>
+    <p class="text-muted mb-4">Your transaction is complete. If you have questions, please reach out via our contact page.</p>
+    <a href="{% url 'home' %}" class="btn btn-primary btn-lg">Return to Home</a>
+  </div>
+</div>
+{% endblock %}

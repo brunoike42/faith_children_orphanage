@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}About Us{% endblock %}
+{% block content %}
+<div class="page-header text-center">
+    <h1 class="fw-bold" style="font-family:'Playfair Display',serif;">About Faith Children's Orphanage</h1>
+    <p class="opacity-75">Home &rsaquo; About Us</p>
+</div>
+<div class="py-5">
+    <div class="container">
+        <div class="row g-5 align-items-center">
+            <div class="col-md-6">
+                <p class="text-uppercase fw-bold" style="color: var(--mw-secondary); letter-spacing:2px;">Learn About Us</p>
+                <h2 class="section-title mb-3">Foundation of faith children's Orphanage Uganda</h2>
+                <ul class="nav nav-tabs" id="aboutTabs">
+                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#about">About</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#mission">Mission</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#vision">Vision</button></li>
+                </ul>
+                <div class="tab-content p-3 border border-top-0 rounded-bottom">
+                    <div class="tab-pane fade show active" id="about">
+                        <p>Faith Children’s Orphanage Uganda is a community-driven organization dedicated to caring for vulnerable and orphaned children. We provide shelter, education, healthcare, and emotional support to help every child grow into a confident and independent individual.</p>
+                    </div>
+                    <div class="tab-pane fade" id="mission">
+                        <p>Our mission is to provide a safe, loving, and supportive environment for orphaned and vulnerable children by meeting their basic needs, promoting education, and nurturing their physical, emotional, and spiritual growth.</p>
+                    </div>
+                    <div class="tab-pane fade" id="vision">
+                        <p>To create a future where every child, regardless of their background, has the opportunity to live with dignity, access quality education, and reach their full potential.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row g-3">
+                    <div class="col-6"><div class="card p-4 text-center stat-card"><h3 class="fw-bold" style="color:var(--mw-primary);">5000+</h3><p class="mb-0">Lives Impacted</p></div></div>
+                    <div class="col-6"><div class="card p-4 text-center stat-card"><h3 class="fw-bold" style="color:var(--mw-primary);">120+</h3><p class="mb-0">Volunteers</p></div></div>
+                    <div class="col-6"><div class="card p-4 text-center stat-card"><h3 class="fw-bold" style="color:var(--mw-primary);">50+</h3><p class="mb-0">Causes</p></div></div>
+                    <div class="col-6"><div class="card p-4 text-center stat-card"><h3 class="fw-bold" style="color:var(--mw-primary);">10+</h3><p class="mb-0">Years</p></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}Volunteer Opportunities{% endblock %}
+{% block content %}
+<div class="page-header text-center">
+  <h2 style="font-family:'Playfair Display',serif;">Volunteer Opportunities</h2>
+  <p class="opacity-75">Make a difference — join our team of change-makers</p>
+</div>
+<div class="container py-5">
+  <div class="row g-4">
+    {% for opp in opportunities %}
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-start mb-3">
+            <div class="p-3 rounded me-3" style="background:var(--mw-light);">
+              <i class="bi bi-people-fill fs-3" style="color:var(--mw-primary);"></i>
+            </div>
+            <div>
+              <h5 class="fw-bold mb-1">{{ opp.title }}</h5>
+              <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{ opp.location }}</small>
+            </div>
+          </div>
+          <p class="text-muted">{{ opp.description|truncatewords:30 }}</p>
+          {% if opp.requirements %}
+          <div class="mb-3">
+            <small class="fw-semibold text-uppercase" style="color:var(--mw-primary); letter-spacing:1px;">Requirements</small>
+            <p class="text-muted small mb-0">{{ opp.requirements|truncatewords:20 }}</p>
+          </div>
+          {% endif %}
+          <a href="{% url 'apply_volunteer' opp.pk %}" class="btn btn-secondary">
+            <i class="bi bi-person-plus me-2"></i>Apply Now
+          </a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+      <i class="bi bi-people text-muted" style="font-size:4rem;"></i>
+      <p class="mt-3 text-muted">No opportunities available right now. Check back soon!</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Why Volunteer Section -->
+<div class="py-5" style="background:var(--mw-light);">
+  <div class="container text-center">
+    <h3 class="section-title mb-4">Why Volunteer With Us?</h3>
+    <div class="row g-4">
+      <div class="col-md-3">
+        <i class="bi bi-award fs-1 mb-3" style="color:var(--mw-primary);"></i>
+        <h6 class="fw-bold">Make an Impact</h6>
+        <p class="text-muted small">Your time directly changes lives in communities across Uganda.</p>
+      </div>
+      <div class="col-md-3">
+        <i class="bi bi-graph-up-arrow fs-1 mb-3" style="color:var(--mw-primary);"></i>
+        <h6 class="fw-bold">Grow Your Skills</h6>
+        <p class="text-muted small">Gain hands-on experience in humanitarian work and leadership.</p>
+      </div>
+      <div class="col-md-3">
+        <i class="bi bi-people fs-1 mb-3" style="color:var(--mw-primary);"></i>
+        <h6 class="fw-bold">Build Community</h6>
+        <p class="text-muted small">Connect with like-minded individuals who share your passion.</p>
+      </div>
+      <div class="col-md-3">
+        <i class="bi bi-heart fs-1 mb-3" style="color:var(--mw-primary);"></i>
+        <h6 class="fw-bold">Feel Fulfilled</h6>
+        <p class="text-muted small">Experience the joy that comes from giving back.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
