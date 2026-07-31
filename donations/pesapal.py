@@ -10,8 +10,12 @@ Flow implemented here:
 
 Reference: https://developer.pesapal.com/how-to-integrate/e-commerce/api-30-json
 """
+import logging
+
 import requests
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 
 class PesapalError(Exception):
@@ -31,6 +35,17 @@ def _check_credentials():
         )
 
 
+def _extract_error_message(data):
+    """Pesapal sometimes nests the real error under data['error']['message'],
+    sometimes puts it at data['message']. Check both."""
+    if not isinstance(data, dict):
+        return None
+    error = data.get("error")
+    if isinstance(error, dict) and error.get("message"):
+        return error["message"]
+    return data.get("message")
+
+
 def get_access_token():
     """Returns a bearer token string, valid for ~5 minutes."""
     _check_credentials()
@@ -47,7 +62,11 @@ def get_access_token():
 
     token = data.get("token")
     if not token:
-        raise PesapalError(data.get("message") or "Pesapal authentication failed.")
+        detail = _extract_error_message(data) or "no error detail returned"
+        # Log the full raw response so it shows up in `railway logs` for debugging,
+        # without exposing internal details to whoever is checking out.
+        logger.error("Pesapal RequestToken failed. HTTP %s. Raw response: %s", resp.status_code, data)
+        raise PesapalError(f"Pesapal authentication failed ({detail}).")
     return token
 
 
@@ -81,7 +100,8 @@ def get_or_register_ipn_id(token, ipn_url, notification_type="GET"):
 
     ipn_id = data.get("ipn_id")
     if not ipn_id:
-        raise PesapalError(data.get("message") or "Could not register IPN URL with Pesapal.")
+        logger.error("Pesapal RegisterIPN failed. Raw response: %s", data)
+        raise PesapalError(_extract_error_message(data) or "Could not register IPN URL with Pesapal.")
     return ipn_id
 
 
@@ -126,8 +146,8 @@ def submit_order_request(token, *, merchant_reference, amount, description, call
     redirect_url = data.get("redirect_url")
     order_tracking_id = data.get("order_tracking_id")
     if not redirect_url or not order_tracking_id:
-        error = data.get("error") or {}
-        raise PesapalError(error.get("message") or data.get("message") or "Pesapal could not create this order.")
+        logger.error("Pesapal SubmitOrderRequest failed. Raw response: %s", data)
+        raise PesapalError(_extract_error_message(data) or "Pesapal could not create this order.")
 
     return {
         "order_tracking_id": order_tracking_id,
