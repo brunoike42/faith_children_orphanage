@@ -173,5 +173,15 @@ SWAGGER_SETTINGS = {
     'LOGOUT_URL': '/accounts/logout/',
 }
 
-PESAPAL_API_URL = os.environ.get('PESAPAL_API_URL', 'https://www.pesapal.com/API/PostPesapalDirectOrderV4')
+PESAPAL_CONSUMER_KEY = os.environ.get('PESAPAL_CONSUMER_KEY', '')
+PESAPAL_CONSUMER_SECRET = os.environ.get('PESAPAL_CONSUMER_SECRET', '')
+# 'sandbox' for testing, 'live' for real production payments
+PESAPAL_ENVIRONMENT = os.environ.get('PESAPAL_ENVIRONMENT', 'sandbox')
+PESAPAL_BASE_URL = (
+    'https://pay.pesapal.com/v3'
+    if PESAPAL_ENVIRONMENT == 'live'
+    else 'https://cybqa.pesapal.com/pesapalv3'
+)
+PESAPAL_CURRENCY = os.environ.get('PESAPAL_CURRENCY', 'UGX')
+# Optional override; if blank, it's built automatically from the current request
 PESAPAL_CALLBACK_URL = os.environ.get('PESAPAL_CALLBACK_URL', '')

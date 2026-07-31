@@ -17,6 +17,8 @@ class Donation(models.Model):
     message = models.TextField(blank=True)
     is_confirmed = models.BooleanField(default=False)
     is_anonymous = models.BooleanField(default=False)
+    order_tracking_id = models.CharField(max_length=100, blank=True, db_index=True)
+    payment_status = models.CharField(max_length=50, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -2,28 +2,31 @@ from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.urls import reverse
+from django.http import JsonResponse
 from urllib.parse import urlencode
 
 from accounts.decorators import staff_required
 from .models import Donation, ContactSubmission
 from .forms import DonationForm
+from .pesapal import (
+    PesapalError, get_access_token, get_or_register_ipn_id,
+    submit_order_request, get_transaction_status,
+)
 from causes.models import Cause
 
-def get_pesapal_redirect_url(request, donation):
-    api_url = getattr(settings, 'PESAPAL_API_URL', 'https://www.pesapal.com/API/PostPesapalDirectOrderV4')
-    callback_url = getattr(settings, 'PESAPAL_CALLBACK_URL', request.build_absolute_uri(reverse('pesapal_callback')))
-    payload = {
-        'amount': f'{donation.amount:.2f}',
-        'description': donation.message or f'Donation {donation.pk}',
-        'type': 'MERCHANT',
-        'reference': str(donation.pk),
-        'first_name': donation.name.split()[0] if donation.name else 'Donor',
-        'last_name': donation.name.split()[-1] if donation.name else '',
-        'email': donation.email or 'donor@example.com',
-        'currency': 'USD',
-        'callback_url': callback_url,
-    }
-    return f"{api_url}?{urlencode(payload)}"
+# Pesapal's payment_status_description values, mapped to what we store locally.
+PESAPAL_COMPLETED_STATUSES = {"COMPLETED"}
+PESAPAL_FAILED_STATUSES = {"FAILED", "INVALID"}
+
+
+def _update_donation_from_status(donation, status_data):
+    """Given a GetTransactionStatus() response, update and save the donation."""
+    description = (status_data or {}).get("payment_status_description", "")
+    donation.payment_status = description
+    if description.upper() in PESAPAL_COMPLETED_STATUSES:
+        donation.is_confirmed = True
+    donation.save()
+    return description
 
 def donation_list(request):
     causes = Cause.objects.filter(is_active=True)
@@ -58,27 +61,90 @@ def donation_list(request):
 def checkout(request, donation_id):
     donation = get_object_or_404(Donation, pk=donation_id)
     if request.method == 'POST':
-        redirect_url = get_pesapal_redirect_url(request, donation)
-        return redirect(redirect_url)
+        callback_url = getattr(settings, 'PESAPAL_CALLBACK_URL', '') or \
+            request.build_absolute_uri(reverse('pesapal_callback'))
+        first_name = donation.name.split()[0] if donation.name else 'Donor'
+        last_name = donation.name.split()[-1] if donation.name and len(donation.name.split()) > 1 else ''
+
+        try:
+            token = get_access_token()
+            ipn_id = get_or_register_ipn_id(token, callback_url)
+            # Merchant reference must be unique per attempt so retries don't collide.
+            merchant_reference = f"{donation.pk}-{int(donation.created_at.timestamp())}"
+            order = submit_order_request(
+                token,
+                merchant_reference=merchant_reference,
+                amount=donation.amount,
+                description=donation.message or f'Donation #{donation.pk}',
+                callback_url=callback_url,
+                ipn_id=ipn_id,
+                email=donation.email,
+                first_name=first_name,
+                last_name=last_name,
+            )
+        except PesapalError as exc:
+            messages.error(
+                request,
+                f"We couldn't start the payment with Pesapal right now ({exc}). "
+                "Please try again in a moment, or contact us if this keeps happening."
+            )
+            return redirect('donation_checkout', donation_id=donation.pk)
+
+        donation.order_tracking_id = order['order_tracking_id']
+        donation.save()
+        return redirect(order['redirect_url'])
 
     context = {
         'donation': donation,
     }
     return render(request, 'donations/checkout.html', context)
 
-def pesapal_callback(request):
-    reference = request.GET.get('reference') or request.POST.get('reference')
-    if reference:
+
+def pesapal_response(request):
+    """
+    Single endpoint used for BOTH:
+      - the browser callback (Pesapal redirects the donor's browser here), and
+      - the server-to-server IPN alert (Pesapal calls this directly).
+    Distinguished by the OrderNotificationType parameter.
+    """
+    order_tracking_id = request.GET.get('OrderTrackingId') or request.POST.get('OrderTrackingId')
+    merchant_reference = request.GET.get('OrderMerchantReference') or request.POST.get('OrderMerchantReference')
+    notification_type = request.GET.get('OrderNotificationType') or request.POST.get('OrderNotificationType')
+
+    description = None
+    ok = False
+    if order_tracking_id:
         try:
-            donation = Donation.objects.get(pk=reference)
-            donation.is_confirmed = True
-            donation.save()
-        except Donation.DoesNotExist:
-            pass
-    return redirect('donation_checkout_success')
+            token = get_access_token()
+            status_data = get_transaction_status(token, order_tracking_id)
+            donation = Donation.objects.filter(order_tracking_id=order_tracking_id).first()
+            if donation:
+                description = _update_donation_from_status(donation, status_data)
+            ok = True
+        except PesapalError:
+            ok = False
+
+    if notification_type in ('IPNCHANGE', 'RECURRING'):
+        # Server-to-server call: Pesapal requires this exact JSON acknowledgement shape.
+        return JsonResponse({
+            'orderNotificationType': notification_type,
+            'orderTrackingId': order_tracking_id,
+            'orderMerchantReference': merchant_reference,
+            'status': 200 if ok else 500,
+        })
+
+    # Browser-facing callback: show the donor a normal page, never JSON.
+    if description and description.upper() in PESAPAL_COMPLETED_STATUSES:
+        return redirect('donation_checkout_success')
+    return redirect('donation_checkout_failed')
+
 
 def checkout_success(request):
     return render(request, 'donations/checkout_success.html')
+
+
+def checkout_failed(request):
+    return render(request, 'donations/checkout_failed.html')
 
 def donation_detail(request, pk):
     donation = get_object_or_404(Donation, pk=pk)

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Payment Not Completed{% endblock %}
+{% block content %}
+<div class="page-header text-center py-5" style="background: linear-gradient(180deg, rgba(180, 60, 60, 0.85), rgba(193, 23, 23, 0.15));">
+  <div class="container">
+    <h2 style="font-family:'Playfair Display',serif;">Payment Not Completed</h2>
+    <p class="opacity-75">Your donation wasn't completed. No amount was charged, or the payment is still pending confirmation.</p>
+  </div>
+</div>
+<div class="container py-5">
+  <div class="card shadow-sm rounded-4 p-5 text-center">
+    <h3 class="mb-3">What happened?</h3>
+    <p class="text-muted mb-4">
+      This can happen if the payment was cancelled, declined by your bank/network,
+      or the connection was interrupted partway through. If you were charged and
+      still see this message, please contact us with your payment reference so we
+      can confirm it on our end.
+    </p>
+    <div class="d-flex justify-content-center gap-3">
+      <a href="{% url 'donate' %}" class="btn btn-primary btn-lg">Try Again</a>
+      <a href="{% url 'contact' %}" class="btn btn-outline-secondary btn-lg">Contact Us</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
