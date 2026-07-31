@@ -100,7 +100,7 @@
             <h5 class="fw-bold mb-2">{{ child.name }}</h5>
             <p class="text-muted small mb-2">“{{ child.quote|default:'A hopeful child ready to build a better future.' }}”</p>
             <p class="text-secondary small mb-3">{{ child.description|truncatewords:20 }}</p>
-            <a href="{% url 'donate' %}" class="card-cta">Sponsor {{ child.name }} <i class="bi bi-arrow-right"></i></a>
+            <a href="{% url 'donate' %}?child={{ child.pk }}" class="card-cta">Sponsor {{ child.name }} <i class="bi bi-arrow-right"></i></a>
           </div>
         </div>
       </div>

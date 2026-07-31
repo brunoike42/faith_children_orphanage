@@ -13,6 +13,7 @@ from .pesapal import (
     submit_order_request, get_transaction_status,
 )
 from causes.models import Cause
+from volunteers.models import Child
 
 # Pesapal's payment_status_description values, mapped to what we store locally.
 PESAPAL_COMPLETED_STATUSES = {"COMPLETED"}
@@ -38,6 +39,11 @@ def donation_list(request):
         except Cause.DoesNotExist:
             selected_cause = None
 
+    sponsored_child = None
+    child_id = request.GET.get('child')
+    if child_id:
+        sponsored_child = Child.objects.filter(pk=child_id, is_active=True).first()
+
     if request.method == 'POST':
         form = DonationForm(request.POST)
         if form.is_valid():
@@ -55,6 +61,7 @@ def donation_list(request):
         'form': form,
         'causes': causes,
         'cause': selected_cause,
+        'sponsored_child': sponsored_child,
     }
     return render(request, 'donations/donate.html', context)
 

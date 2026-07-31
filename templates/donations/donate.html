@@ -269,16 +269,34 @@ input.form-control,
           </ul>
         </div>
         <div class="story-card mb-4">
-          <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Story of Hope">
-          <div class="story-card-body">
-            <small>STORY OF HOPE</small>
-            <h5>Meet Maya</h5>
-            <p class="text-muted">"Because of Faith Children's Orphanage Uganda, I can finally go to school every day and believe in a brighter future."</p>
-            <div class="progress" style="height: 10px; border-radius: 999px;">
-              <div class="progress-bar" role="progressbar" style="width: 85%; background: var(--mw-secondary);" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+          {% if sponsored_child %}
+            {% if sponsored_child.image %}
+            <img src="{{ sponsored_child.image.url }}" alt="{{ sponsored_child.name }}">
+            {% else %}
+            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="{{ sponsored_child.name }}">
+            {% endif %}
+            <div class="story-card-body">
+              <small>STORY OF HOPE</small>
+              <h5>Meet {{ sponsored_child.name }}</h5>
+              {% if sponsored_child.quote %}
+              <p class="text-muted">"{{ sponsored_child.quote }}"</p>
+              {% else %}
+              <p class="text-muted">{{ sponsored_child.description|truncatewords:25 }}</p>
+              {% endif %}
+              <small class="text-muted d-block mt-2">Age {{ sponsored_child.age }} — sponsored by donors like you</small>
             </div>
-            <small class="text-muted d-block mt-2">Maya's Education Fund — 85%</small>
-          </div>
+          {% else %}
+            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Story of Hope">
+            <div class="story-card-body">
+              <small>STORY OF HOPE</small>
+              <h5>Meet Maya</h5>
+              <p class="text-muted">"Because of Faith Children's Orphanage Uganda, I can finally go to school every day and believe in a brighter future."</p>
+              <div class="progress" style="height: 10px; border-radius: 999px;">
+                <div class="progress-bar" role="progressbar" style="width: 85%; background: var(--mw-secondary);" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+              <small class="text-muted d-block mt-2">Maya's Education Fund — 85%</small>
+            </div>
+          {% endif %}
         </div>
         <div class="card shadow-sm border-0 p-4" style="border-radius: 28px; background: #f1fbf5;">
           <h6 class="mb-3" style="color: var(--mw-primary);">Transparency Matters</h6>
