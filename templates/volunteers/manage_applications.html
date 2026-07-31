@@ -16,7 +16,7 @@
         <tbody>
           {% for app in applications %}
           <tr>
-            <td><strong>{{ app.name }}</strong></td>
+            <td><strong>{{ app.full_name }}</strong></td>
             <td>{{ app.email }}</td>
             <td>{{ app.phone }}</td>
             <td>{{ app.opportunity.title|truncatewords:4 }}</td>

@@ -10,6 +10,7 @@ from causes.models import Cause
 from events.models import Event
 from blog.models import Post
 from .models import HeroImage
+from . import views as core_views
 
 admin.site.register(HeroImage)
 
@@ -71,6 +72,13 @@ urlpatterns = [
     path('blog/', include('blog.urls')),
     path('donations/', include('donations.urls')),
     path('volunteers/', include('volunteers.urls')),
+
+    # Custom admin dashboard: homepage hero images
+    path('dashboard/hero/', core_views.manage_hero, name='manage_hero'),
+    path('dashboard/hero/add/', core_views.hero_form, name='add_hero'),
+    path('dashboard/hero/<int:pk>/edit/', core_views.hero_form, name='edit_hero'),
+    path('dashboard/hero/<int:pk>/delete/', core_views.delete_hero, name='delete_hero'),
+
     # REST API
     path('api/', include('causes.api_urls')),
     path('api/', include('donations.api_urls')),

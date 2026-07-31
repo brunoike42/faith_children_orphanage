@@ -241,6 +241,10 @@ input.form-control,
             <label class="form-label small text-uppercase text-muted">Message</label>
             {{ form.message }}
           </div>
+          <div class="mb-4 form-check">
+            {{ form.is_anonymous }}
+            <label class="form-check-label" for="{{ form.is_anonymous.id_for_label }}">{{ form.is_anonymous.label }}</label>
+          </div>
           <button type="submit" class="btn btn-primary btn-lg w-100">Next: Payment Details <i class="bi bi-arrow-right ms-2"></i></button>
         </form>
       </div>

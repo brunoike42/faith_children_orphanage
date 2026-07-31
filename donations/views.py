@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.urls import reverse
 from urllib.parse import urlencode
 
+from accounts.decorators import staff_required
 from .models import Donation, ContactSubmission
 from .forms import DonationForm
 from causes.models import Cause
@@ -128,3 +129,28 @@ def donate_cause(request, cause_id):
         'cause': cause,
     }
     return render(request, 'donations/donate.html', context)
+
+
+# ---------------------------------------------------------------------------
+# Custom admin dashboard: donations & contact messages
+# ---------------------------------------------------------------------------
+
+@staff_required
+def manage_donations(request):
+    donations = Donation.objects.select_related('cause', 'donor').order_by('-created_at')
+    return render(request, 'donations/manage_donations.html', {'donations': donations})
+
+
+@staff_required
+def manage_messages(request):
+    contact_messages = ContactSubmission.objects.order_by('-created_at')
+    return render(request, 'donations/manage_messages.html', {'contact_messages': contact_messages})
+
+
+@staff_required
+def mark_message_read(request, pk):
+    submission = get_object_or_404(ContactSubmission, pk=pk)
+    submission.is_read = True
+    submission.save()
+    messages.success(request, 'Marked as read.')
+    return redirect('manage_messages')

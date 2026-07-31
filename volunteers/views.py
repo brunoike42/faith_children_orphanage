@@ -4,7 +4,8 @@ from django.contrib import messages
 from django.db import connection, OperationalError
 from django.db.models import Q
 
-from .forms import VolunteerOpportunityForm
+from accounts.decorators import staff_required
+from .forms import VolunteerOpportunityForm, ChildForm
 from .models import Volunteer, VolunteerOpportunity, Child
 
 
@@ -196,11 +197,9 @@ def apply_volunteer(request, pk):
     return render(request, 'volunteers/apply.html', context)
 
 
+@staff_required
 def volunteer_form(request, pk=None):
-    """Form for creating/editing volunteer opportunities - admin only"""
-    if not request.user.is_staff:
-        return render(request, 'accounts/access_denied.html', status=403)
-
+    """Form for creating/editing volunteer opportunities - staff only"""
     opportunity = None
     if pk:
         opportunity = get_object_or_404(VolunteerOpportunity, pk=pk)
@@ -210,7 +209,7 @@ def volunteer_form(request, pk=None):
         if form.is_valid():
             form.save()
             messages.success(request, 'Volunteer opportunity has been saved successfully.')
-            return redirect('opportunity_list')
+            return redirect('manage_opportunities')
     else:
         form = VolunteerOpportunityForm(instance=opportunity)
 
@@ -222,26 +221,31 @@ def volunteer_form(request, pk=None):
     return render(request, 'volunteers/opportunity_form.html', context)
 
 
+@staff_required
 def manage_opportunities(request):
-    if not request.user.is_staff:
-        return render(request, 'accounts/access_denied.html', status=403)
-
     opportunities = VolunteerOpportunity.objects.order_by('-is_active', '-order', '-created_at')
     return render(request, 'volunteers/manage_opportunities.html', {'opportunities': opportunities})
 
 
-def manage_applications(request):
-    if not request.user.is_staff:
-        return render(request, 'accounts/access_denied.html', status=403)
+@staff_required
+def delete_opportunity(request, pk):
+    opportunity = get_object_or_404(VolunteerOpportunity, pk=pk)
+    if request.method == 'POST':
+        title = opportunity.title
+        opportunity.delete()
+        messages.success(request, f'Opportunity "{title}" deleted.')
+        return redirect('manage_opportunities')
+    return render(request, 'volunteers/opportunity_confirm_delete.html', {'opportunity': opportunity})
 
+
+@staff_required
+def manage_applications(request):
     applications = Volunteer.objects.select_related('opportunity').order_by('-created_at')
     return render(request, 'volunteers/manage_applications.html', {'applications': applications})
 
 
+@staff_required
 def update_application_status(request, pk):
-    if not request.user.is_staff:
-        return render(request, 'accounts/access_denied.html', status=403)
-
     application = get_object_or_404(Volunteer, pk=pk)
     if request.method == 'POST':
         status = request.POST.get('status')
@@ -250,3 +254,47 @@ def update_application_status(request, pk):
             application.save()
             messages.success(request, 'Application status updated.')
     return redirect('manage_applications')
+
+
+# ---------------------------------------------------------------------------
+# Custom admin dashboard: "Our Children" profile management
+# ---------------------------------------------------------------------------
+
+@staff_required
+def manage_children(request):
+    children = Child.objects.order_by('-order', 'name')
+    return render(request, 'volunteers/manage_children.html', {'children': children})
+
+
+@staff_required
+def child_form(request, pk=None):
+    child = None
+    if pk:
+        child = get_object_or_404(Child, pk=pk)
+
+    if request.method == 'POST':
+        form = ChildForm(request.POST, request.FILES, instance=child)
+        if form.is_valid():
+            obj = form.save()
+            messages.success(request, f'Child profile "{obj.name}" saved successfully!')
+            return redirect('manage_children')
+    else:
+        form = ChildForm(instance=child)
+
+    context = {
+        'form': form,
+        'child': child,
+        'title': 'Edit Child Profile' if child else 'Add New Child Profile',
+    }
+    return render(request, 'volunteers/child_form.html', context)
+
+
+@staff_required
+def delete_child(request, pk):
+    child = get_object_or_404(Child, pk=pk)
+    if request.method == 'POST':
+        name = child.name
+        child.delete()
+        messages.success(request, f'Child profile "{name}" deleted.')
+        return redirect('manage_children')
+    return render(request, 'volunteers/child_confirm_delete.html', {'child': child})

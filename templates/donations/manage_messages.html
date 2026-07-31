@@ -14,7 +14,7 @@
           <tr><th>Name</th><th>Email</th><th>Subject</th><th>Message</th><th>Date</th><th>Status</th><th>Action</th></tr>
         </thead>
         <tbody>
-          {% for msg in messages %}
+          {% for msg in contact_messages %}
           <tr {% if not msg.is_read %}class="table-warning fw-semibold"{% endif %}>
             <td>{{ msg.name }}</td>
             <td>{{ msg.email }}</td>

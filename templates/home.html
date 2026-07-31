@@ -315,7 +315,7 @@ And that is exactly what we strive to give.</p>
                         <small class="text-muted">{{ post.created_at|date:"M d, Y" }}</small>
                         <h6 class="fw-bold mt-1">{{ post.title }}</h6>
                         <p class="text-muted small">{{ post.excerpt|default:post.content|truncatewords:15 }}</p>
-                        <a href="{% url 'post_detail' post.slug %}" class="btn btn-outline-primary btn-sm">Read More</a>
+                        <a href="{% url 'post_detail' post.pk %}" class="btn btn-outline-primary btn-sm">Read More</a>
                     </div>
                 </div>
             </div>

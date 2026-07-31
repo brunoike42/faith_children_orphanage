@@ -3,9 +3,11 @@ from . import views
 
 urlpatterns = [
     path('', views.event_list, name='event_list'),
-    path('events/', views.event_list, name='event_list_alt'),
     path('<int:pk>/', views.event_detail, name='event_detail'),
-    path('events/<int:pk>/', views.event_detail, name='event_detail_alt'),
-    path('create/', views.event_form, name='event_create'),
-    path('<int:pk>/edit/', views.event_form, name='event_edit'),
+
+    # Custom admin dashboard
+    path('manage/', views.manage_events, name='manage_events'),
+    path('manage/add/', views.event_form, name='add_event'),
+    path('manage/<int:pk>/edit/', views.event_form, name='edit_event'),
+    path('manage/<int:pk>/delete/', views.delete_event, name='delete_event'),
 ]

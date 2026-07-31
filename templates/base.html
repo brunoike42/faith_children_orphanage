@@ -124,6 +124,22 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="{% url 'dashboard' %}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person me-2"></i>My Profile</a></li>
+                        {% if user.is_staff or user.is_superuser or user.role == 'admin' or user.role == 'manager' %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li><h6 class="dropdown-header">Manage Content</h6></li>
+                        <li><a class="dropdown-item" href="{% url 'manage_causes' %}"><i class="bi bi-heart me-2"></i>Causes</a></li>
+                        <li><a class="dropdown-item" href="{% url 'manage_events' %}"><i class="bi bi-calendar-event me-2"></i>Events</a></li>
+                        <li><a class="dropdown-item" href="{% url 'manage_posts' %}"><i class="bi bi-pencil-square me-2"></i>Blog Posts</a></li>
+                        <li><a class="dropdown-item" href="{% url 'manage_opportunities' %}"><i class="bi bi-people me-2"></i>Volunteer Opportunities</a></li>
+                        <li><a class="dropdown-item" href="{% url 'manage_children' %}"><i class="bi bi-person-hearts me-2"></i>Children Profiles</a></li>
+                        <li><a class="dropdown-item" href="{% url 'manage_hero' %}"><i class="bi bi-images me-2"></i>Homepage Banner</a></li>
+                        <li><a class="dropdown-item" href="{% url 'manage_donations' %}"><i class="bi bi-cash-stack me-2"></i>Donations</a></li>
+                        <li><a class="dropdown-item" href="{% url 'manage_messages' %}"><i class="bi bi-envelope me-2"></i>Contact Messages</a></li>
+                        {% endif %}
+                        {% if user.is_superuser or user.role == 'admin' %}
+                        <li><a class="dropdown-item" href="{% url 'manage_users' %}"><i class="bi bi-person-gear me-2"></i>Users</a></li>
+                        {% endif %}
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
                     </ul>
@@ -225,75 +241,6 @@ function updateHero() {
 
 updateHero();
 setInterval(updateHero, 5000);
-<<<<<<< HEAD
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    const counters = document.querySelectorAll('.counter');
-
-    function animate(counter) {
-        const target = +counter.getAttribute('data-target');
-        let count = 0;
-
-        const step = target / 200;
-
-        function update() {
-            count += step;
-
-            if (count < target) {
-                counter.innerText = Math.ceil(count);
-                requestAnimationFrame(update);
-            } else {
-                counter.innerText = target + '+';
-            }
-        }
-
-        update();
-    }
-
-    counters.forEach(counter => {
-        counter.innerText = "0";
-        animate(counter);
-    });
-
-});
-
-=======
->>>>>>> 636e0a3128777023c40bf233e44ccd2dde67bf1a
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    const counters = document.querySelectorAll('.counter');
-
-    function animate(counter) {
-        const target = +counter.getAttribute('data-target');
-        let count = 0;
-
-        const step = target / 200;
-
-        function update() {
-            count += step;
-
-            if (count < target) {
-                counter.innerText = Math.ceil(count);
-                requestAnimationFrame(update);
-            } else {
-                counter.innerText = target + '+';
-            }
-        }
-
-        update();
-    }
-
-    counters.forEach(counter => {
-        counter.innerText = "0";
-        animate(counter);
-    });
-
-});
-
 </script>
 
 <script>
@@ -306,7 +253,6 @@ document.addEventListener("DOMContentLoaded", function () {
       if (entry.isIntersecting) {
         entry.target.classList.add('active');
       } else {
-        // Optional: remove if you want animation only once
         entry.target.classList.remove('active');
       }
     });
@@ -317,7 +263,6 @@ document.addEventListener("DOMContentLoaded", function () {
   reveals.forEach(el => observer.observe(el));
 
 });
-
 </script>
 
 <script>
@@ -362,14 +307,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
-<script src="bootstrap..."></script>
 
-<script> ... hero slider ... </script>
-<script> ... counter ... </script>
-<script> ... reveal ... </script>
-
-
-</body>
-</html>
 </body>
 </html>

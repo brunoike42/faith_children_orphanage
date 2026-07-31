@@ -25,4 +25,3 @@ class BlogPost(models.Model):
 
 # Alias so existing imports work
 Post = BlogPost
-slug = models.SlugField(unique=True, blank=True, default='')

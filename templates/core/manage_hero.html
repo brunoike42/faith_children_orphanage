@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Manage Hero Images{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container d-flex justify-content-between align-items-center">
+    <h2 style="font-family:'Playfair Display',serif;"><i class="bi bi-images me-2"></i>Homepage Banner Images</h2>
+    <a href="{% url 'add_hero' %}" class="btn btn-secondary"><i class="bi bi-plus-circle me-1"></i>Add Hero Image</a>
+  </div>
+</div>
+<div class="container py-5">
+  <p class="text-muted">These images rotate in the banner at the top of your homepage.</p>
+  <div class="row g-4">
+    {% for hero in hero_images %}
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm">
+        {% if hero.image %}
+        <img src="{{ hero.image.url }}" class="card-img-top" style="height:180px;object-fit:cover;">
+        {% else %}
+        <div class="d-flex align-items-center justify-content-center bg-light" style="height:180px;">
+          <span class="text-muted">No image</span>
+        </div>
+        {% endif %}
+        <div class="card-body">
+          <h5 class="card-title">{{ hero.title }}</h5>
+          <p class="card-text text-muted small">{{ hero.subtitle|truncatewords:15 }}</p>
+          <span class="badge bg-{% if hero.is_active %}success{% else %}secondary{% endif %} mb-2">{% if hero.is_active %}Live{% else %}Hidden{% endif %}</span>
+        </div>
+        <div class="card-footer bg-white d-flex justify-content-between">
+          <a href="{% url 'edit_hero' hero.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+          <a href="{% url 'delete_hero' hero.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center text-muted py-5">No hero images yet. Add one to populate the homepage banner.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

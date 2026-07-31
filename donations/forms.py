@@ -22,12 +22,13 @@ class DonationForm(forms.ModelForm):
 
     class Meta:
         model = Donation
-        fields = ['name', 'email', 'frequency', 'amount', 'cause', 'message']
+        fields = ['name', 'email', 'frequency', 'amount', 'cause', 'message', 'is_anonymous']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Full name'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email address'}),
             'cause': forms.RadioSelect(attrs={'class': 'form-check-input'}),
             'message': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Leave a message (optional)'}),
+            'is_anonymous': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -35,3 +36,5 @@ class DonationForm(forms.ModelForm):
         self.fields['cause'].queryset = Cause.objects.filter(is_active=True)
         self.fields['cause'].required = False
         self.fields['message'].required = False
+        self.fields['is_anonymous'].required = False
+        self.fields['is_anonymous'].label = 'Give anonymously'

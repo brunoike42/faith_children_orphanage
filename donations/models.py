@@ -16,6 +16,7 @@ class Donation(models.Model):
     cause = models.ForeignKey('causes.Cause', on_delete=models.SET_NULL, null=True, blank=True)
     message = models.TextField(blank=True)
     is_confirmed = models.BooleanField(default=False)
+    is_anonymous = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
